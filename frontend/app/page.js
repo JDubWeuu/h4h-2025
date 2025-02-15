@@ -1,13 +1,33 @@
+"use client"
+
 import Image from "next/image";
 import "./globals.css";
 import { useState } from "react";
 
 export default function Home() {
   const [text, setText] = useState("record");
+  const [count, setCount] = useState(0);
+
 
   const clickButton = () => {
-    newText = text === "record" ? "stop recording" : "record"
-    setText(newText)
+    if (count == 0) {
+      setCount(count+1)
+      speak()
+    }
+    if (newText == "record") {
+      // create a websocket connection with backend to obtain voice of user
+    }
+    let newText = text === "record" ? "stop recording" : "record"
+    setText(newText);
+  }
+
+  const speak = () => {
+    const talk = new SpeechSynthesisUtterance("Hello there! I'm your flight booking assistant! How can I help you?");
+    
+    const voices = speechSynthesis.getVoices()
+    talk.voice = voices[2];
+
+    speechSynthesis.speak(talk);
   }
   return (
     <div>
