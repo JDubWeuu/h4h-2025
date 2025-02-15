@@ -3,3 +3,4 @@ fastapi
 pydantic
 langchain
 browser-use
+langchain-deepseek

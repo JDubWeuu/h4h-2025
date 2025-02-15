@@ -37,7 +37,6 @@ body {
 
 .btn-88,
 .btn-88 *,
-.btn-88 :after,
 .btn-88 :before,
 .btn-88:after,
 .btn-88:before {
@@ -45,11 +44,14 @@ body {
   box-sizing: border-box;
 }
 
+
 .btn-88 {
   -webkit-tap-highlight-color: transparent;
   -webkit-appearance: button;
   background-color: #000;
   background-image: none;
+  color: #ffffff;
+  /*FIX*/
   color: #ffffff; /*outline color*/
   cursor: pointer;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -67,12 +69,15 @@ body {
   justify-content: center;
   align-items: center; 
 }
+
 .btn-88:disabled {
   cursor: default;
 }
+
 .btn-88:-moz-focusring {
   outline: auto;
 }
+
 .btn-88 svg {
   display: block;
   width: 60%;
@@ -80,9 +85,11 @@ body {
   object-fit: contain;
   fill: #000;
 }
+
 .btn-88 [hidden] {
   display: none;
 }
+
 .btn-88 {
   background: none;
   border: 5px solid;
@@ -94,15 +101,18 @@ body {
   text-transform: uppercase;
   display: flex;
 }
+
 .btn-88 svg {
   fill: #000;
   position: relative;
   z-index: 1;
 }
+
 .btn-88:hover svg {
   fill: #fff;
   color: #ffa0a0;
 }
+
 .btn-88:before {
   background: #e9877c; /* fill color normal */
   border-radius: 50%;
@@ -114,6 +124,7 @@ body {
   transform: scale(1);
   transition: 0.5s;
 }
+
 .btn-88:hover:before {
   opacity: 0;
   transform: scale(4);
