@@ -4,7 +4,6 @@ import Image from "next/image";
 import "./globals.css";
 import { useEffect, useState, useRef } from "react";
 
-
 export default function Home() {
   const [text, setText] = useState("record");
   const [audioStream, setAudioStream] = useState(null);
@@ -14,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     // const ws = new WebSocket("http://localhost:3000/ws/audio");
-    socketRef.current = new WebSocket("ws://localhost:3000/ws/audio");
+    socketRef.current = new WebSocket("ws://127.0.0.1:8000/ws/audio");
     socketRef.current.binaryType = "arraybuffer";
 
     socketRef.current.onopen = () => {
@@ -32,7 +31,7 @@ export default function Home() {
     socketRef.current.onclose = () => {
       console.log("WebSocket connection closed");
     };
-  }, [])
+  }, []);
 
   const clickButton = async () => {
     if (count == 0) {
@@ -66,14 +65,21 @@ export default function Home() {
       }
     } else {
       // end the websocket connection
-     if (audioStream) {
-       const tracks = audioStream.getTracks();
-       for (let track of tracks) {
-         track.stop();
-         console.log(`Stopped track: ${track.kind}`);
-       }
-       setAudioStream(null);
-     }
+      if (audioStream) {
+        const tracks = audioStream.getTracks();
+        for (let track of tracks) {
+          track.stop();
+          console.log(`Stopped track: ${track.kind}`);
+        }
+        // Close the WebSocket connection if it's open
+        if (
+          socketRef.current &&
+          socketRef.current.readyState === WebSocket.OPEN
+        ) {
+          socketRef.current.close();
+        }
+        setAudioStream(null);
+      }
     }
     let newText = text === "record" ? "stop recording" : "record";
     setText(newText);
