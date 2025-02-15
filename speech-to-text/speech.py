@@ -190,25 +190,14 @@ class ResumableMicrophoneStream:
             yield b"".join(data)
 
 
-def listen_print_loop(responses: object, stream: object) -> None:
+def listen_print_loop(responses: object, stream: object) -> str:
     """Iterates through server responses and prints them.
-
-    The responses passed is a generator that will block until a response
-    is provided by the server.
-
-    Each response may contain multiple results, and each result may contain
-    multiple alternatives; for details, see https://goo.gl/tjCPAU.  Here we
-    print only the transcription for the top alternative of the top result.
-
-    In this case, responses are provided for interim results as well. If the
-    response is an interim one, print a line feed at the end of it, to allow
-    the next result to overwrite it, until the response is a final one. For the
-    final one, print a newline to preserve the finalized transcription.
-
-    Arg:
-        responses: The responses returned from the API.
-        stream: The audio stream to be processed.
+    
+    Returns:
+        str: The final transcript when user says quit/exit
     """
+    final_transcript = ""
+    
     for response in responses:
         if get_current_time() - stream.start_time > STREAMING_LIMIT:
             stream.start_time = get_current_time()
@@ -250,6 +239,7 @@ def listen_print_loop(responses: object, stream: object) -> None:
 
             stream.is_final_end_time = stream.result_end_time
             stream.last_transcript_was_final = True
+            final_transcript = transcript  # Store the last final transcript
 
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
@@ -257,13 +247,15 @@ def listen_print_loop(responses: object, stream: object) -> None:
                 sys.stdout.write(YELLOW)
                 sys.stdout.write("Exiting...\n")
                 stream.closed = True
-                break
+                return final_transcript  # Return the last transcript
         else:
             sys.stdout.write(RED)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
             stream.last_transcript_was_final = False
+
+    return final_transcript
 
 
 def main() -> None:
@@ -304,9 +296,12 @@ def main() -> None:
             )
 
             responses = client.streaming_recognize(streaming_config, requests)
+            
 
             # Now, put the transcription responses to use.
-            listen_print_loop(responses, stream)
+            final_transcript = listen_print_loop(responses, stream)
+            
+            # check if the final transcript contains the details we need. If not, 
 
             if stream.result_end_time > 0:
                 stream.final_request_end_time = stream.is_final_end_time
