@@ -1,29 +1,3 @@
-#!/usr/bin/env python
-# Copyright 2024 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
-"""Google Cloud Text-To-Speech API streaming sample application .
-
-Example usage:
-    python streaming_tts_quickstart.py
-"""
-
-
-#!/usr/bin/env python
-# Plays audio from the Google Cloud Text-to-Speech streaming API on your speakers.
-
 from google.cloud import texttospeech
 import itertools
 import pyaudio
@@ -48,16 +22,7 @@ def run_streaming_tts_quickstart():
     # Request generator. Replace these hardcoded chunks with your LLM output if needed.
     def request_generator():
         yield texttospeech.StreamingSynthesizeRequest(
-            input=texttospeech.StreamingSynthesisInput(text="Hello there. ")
-        )
-        yield texttospeech.StreamingSynthesizeRequest(
-            input=texttospeech.StreamingSynthesisInput(text="How are you ")
-        )
-        yield texttospeech.StreamingSynthesizeRequest(
-            input=texttospeech.StreamingSynthesisInput(text="today? It's ")
-        )
-        yield texttospeech.StreamingSynthesizeRequest(
-            input=texttospeech.StreamingSynthesisInput(text="such nice weather outside.")
+            input=texttospeech.StreamingSynthesisInput(text="How can I help you today?")
         )
 
     # Chain the config and text requests.

@@ -7,6 +7,7 @@ from google.cloud import speech
 import pyaudio
 from google.oauth2 import service_account
 from dotenv import load_dotenv
+from .tts import run_streaming_tts_quickstart
 
 load_dotenv()
 
@@ -317,4 +318,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    run_streaming_tts_quickstart()
     main()
