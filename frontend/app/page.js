@@ -14,7 +14,7 @@ export default function Home() {
 
   useEffect(() => {
     // const ws = new WebSocket("http://localhost:3000/ws/audio");
-    socketRef.current = new WebSocket("ws://localhost:3000/ws/audio");
+    socketRef.current = new WebSocket("ws://127.0.0.1:8000/ws/audio");
     socketRef.current.binaryType = "arraybuffer";
 
     socketRef.current.onopen = () => {
@@ -71,6 +71,13 @@ export default function Home() {
        for (let track of tracks) {
          track.stop();
          console.log(`Stopped track: ${track.kind}`);
+       }
+       // Close the WebSocket connection if it's open
+       if (
+         socketRef.current &&
+         socketRef.current.readyState === WebSocket.OPEN
+       ) {
+         socketRef.current.close();
        }
        setAudioStream(null);
      }
