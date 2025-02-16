@@ -1,5 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+import speech_processor
 
 
 app = FastAPI()
@@ -27,5 +28,7 @@ async def obtain_speech(websocket: WebSocket):
         # pass the audio_chunks into the google speech to text
         print("Web Socket disconnected!")
         await websocket.close()
+        transcript = speech_processor.transcribe_audio_chunks(audio_chunks)
+        audio_chunks.clear()
         
         
