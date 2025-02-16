@@ -5,6 +5,7 @@ from .speech_to_text.speech_from_audio import transcribe_file
 import aiofiles
 import subprocess
 import os
+from .browser.lchain import runprompt
 
 
 app = FastAPI()
@@ -54,10 +55,12 @@ async def uploadMP3(file: UploadFile = File(...)):
         async with aiofiles.open(file_path, 'wb') as out_file:
             await out_file.write(content)
             res = transcribe_file(file_path)
-            print(res)
-
+            text = res.results
+            parsed = " ".join([item.alternatives[0].transcript for item in text])
+            # print("asdasd",parsed,"asdasd")
+            output = await runprompt(parsed)
         return {
-            "message": "Successfully sent wav!"
+            "message": output
         }
     except HTTPException:
         raise HTTPException(

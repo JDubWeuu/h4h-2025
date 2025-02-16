@@ -5,6 +5,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 
 export default function AudioRecorder() {
   const [text, setText] = useState("Record");
+  const [speech, setSpeech] = useState("");
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
       audio: {
@@ -14,6 +15,15 @@ export default function AudioRecorder() {
       },
       blobPropertyBag: { type: "audio/wav" },
     });
+
+    useEffect(()=>{
+    const talk = new SpeechSynthesisUtterance(
+      speech
+    );
+    const voices = speechSynthesis.getVoices();
+    talk.voice = voices[0];
+    speechSynthesis.speak(talk);
+    },[speech]);
 
 
   const [isUploading, setIsUploading] = useState(false);
@@ -66,7 +76,7 @@ export default function AudioRecorder() {
       const data = await res.json();
       console.log("Backend response:", data);
       setUploadStatus("Upload successful!");
-
+      setSpeech(data.message);
       // Cleanup
       audioContext.close();
     } catch (error) {

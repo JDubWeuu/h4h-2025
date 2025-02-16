@@ -6,7 +6,7 @@ import langchain
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.tools import tool
-from bser import run_browser
+from .bser import run_browser
 from langchain_core.tools import StructuredTool, Tool, tool
 from langchain.agents.agent_types import AgentType
 from langchain.agents import initialize_agent
@@ -51,33 +51,34 @@ async def browser_tool(query: str) -> str:
         return "Error fetching results"
 
 # User input and prompt
-user_input = "I want to book a flight march 20 to 22nd from sfo to jfk"
-prompt = f"""
-You are a travel assistant for a blind person and must use the `browser_tool` to search for flights when flight information is incomplete or needs verification. 
-You should never provide a final answer without first calling the tool to fetch real-time flight data. For example:
 
-Example:
-User: "I want to book a flight from SFO to JFK on March 20th to 22nd."
-Assistant: (Calls `browser_tool` with: {{"query": "search up flights from SFO to JFK on March 20th to 22nd"}})
 
-Now respond to the user's input: {user_input}
-"""
-
-async def main():
+async def runprompt(userinput):
     agent = initialize_agent(
         tools=[browser_tool],
         llm=llm,
         agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,  # or another agent type that supports function calls
         verbose=True,
     )
+    prompt = f"""
+    You are a travel assistant for a blind person and must use the `browser_tool` to search for flights when flight information is incomplete or needs verification. 
+    You should never provide a final answer without first calling the tool to fetch real-time flight data. For example:
+
+    Example:
+    User: "I want to book a flight from SFO to JFK on March 20th to 22nd."
+    Assistant: (Calls `browser_tool` with: {{"query": "search up flights from SFO to JFK on March 20th to 22nd"}})
+
+    Now respond to the user's input: {userinput}
+    """
     # interface_llm = llm.bind_tools([browser_tool])
     # response = await interface_llm.ainvoke(prompt)
     response = await agent.arun({"input": prompt, "chat_history": []})
     print(response)
+    return response
 
 # Run the main function
 
-asyncio.run(main())
+
 
 
 # langchain agent:
