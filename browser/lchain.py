@@ -118,14 +118,14 @@ async def checkout_flight(userinput,last_prompt):
     # interface_llm = llm.bind_tools([browser_tool])
     # response = await interface_llm.ainvoke(prompt)
     response = await agent.arun({"input": prompt, "chat_history": []})
-    print(response)
-    return response
-    # WE GET THE URLS AND FLIGHT INFO
+    prompt = f""" create a return message based on the following: {response}
+    Make sure the ending is the same, use the information above for the confirmation to assure them we are ready to book their flight.
+    output format: "[confirmation(your flight info)] All that's left is your name, date of birth, credit card number, and billing address.
+
+    """
+    concise_output = llm.invoke(prompt)
     
-    response = await agent.arun({"input": prompt, "chat_history": []})
-    ai_msg = llm.invoke(messages)
-    
-    return ai_msg
+    return concise_output
 
     
 

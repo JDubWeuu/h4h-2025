@@ -67,11 +67,12 @@ async def run_browser(user_request: str):
     ## Searching for flight phase:
     1. go to https://www.kayak.com
     2. select the flights tab
-    3. fill out from left to right: search and select destinations (ensure it is selected from the dropdown. you will know it is selected when there is a remove button)
+    3. fill out from left to right: search and then select destinations (ensure location is selected from the dropdown/popup. you will know it is selected when there is a remove button)
     4. select the dates on the calendar and submit
+        - You can navigate through the page dates by clicking the arrow keys on the application. Make sure to get the dates right.
     5. select 1 adult if the user did not specify other travellers
     6. press the search icon and wait for responses
-    7. use the save_flights tool to save flight price information
+    7. scrape the first couple prices of flights information from the screen and remember them
     8. tell the user the best flights (include the URLs for the flights as well)
     Example output for Searching for flight phase:
     "Here are some of the best flight options from SFO to JFK on March 20th to 22nd:
@@ -101,7 +102,7 @@ async def run_browser(user_request: str):
     ## Book Flight phase:
     1. go to the URL of the user's preferred flight
     2. wait for the page to load and then scroll until you find a flight that matches the specified airline and price
-    3. click the 'view detail' button
+    3. click the 'View Deal' button
     4. select the 'accept restrictions'
     5. go to checkout
     6. last step is to get to the contact info screen, do not fill it in
