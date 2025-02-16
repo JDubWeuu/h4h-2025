@@ -15,7 +15,7 @@ def transcribe_audio_chunks(audio_chunks: list) -> str:
     
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=16000,  # Adjust as needed for your audio.
+        sample_rate_hertz=48000,  # Adjust as needed for your audio.
         language_code="en-US"
     )
     
