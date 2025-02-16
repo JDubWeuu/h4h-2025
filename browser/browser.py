@@ -5,7 +5,11 @@ from browser_use import ActionResult, Agent, Browser, Controller, BrowserConfig
 from pydantic import SecretStr
 from typing import List
 from langchain_google_genai import ChatGoogleGenerativeAI
+from browser_use import Controller, ActionResult
+from langchain_core.tools import tool
 
+# Initialize the controller
+controller = Controller()
 
 import asyncio
 
@@ -36,7 +40,6 @@ class Flights(BaseModel):
 
 # Initialize the model
 llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp', api_key=SecretStr(os.getenv('GEMINI_API_KEY')))
-
 browser = Browser()
 
 
@@ -69,9 +72,9 @@ async def ask_details(params: Flights, browser: Browser):
     print(f"please give more info")
 
 agent = Agent(
-    task=task,
     llm=llm,
     browser=browser,
+    controller=controller,
     controller=controller,
     use_vision=False,
     max_failures=2,
