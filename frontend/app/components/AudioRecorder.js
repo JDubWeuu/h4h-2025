@@ -76,7 +76,7 @@ export default function AudioRecorder() {
       const data = await res.json();
       console.log("Backend response:", data);
       setUploadStatus("Upload successful!");
-      setSpeech(data.message);
+      setSpeech(data.message.content);
       // Cleanup
       audioContext.close();
     } catch (error) {

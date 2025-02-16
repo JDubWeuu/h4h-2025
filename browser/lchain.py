@@ -31,50 +31,103 @@ llm = ChatGroq(
 )
 
 
-
-
 # Define browser_agent tool
 @tool
-async def browser_tool(query: str) -> str:
-    """Get browser results based on the query."""
+async def find_flight_tool(query: str) -> str:
+    """Get resulting flights based on the query."""
     if not query:
         raise ValueError("Query cannot be empty")
     
-    print(f"[DEBUG] Running browser_agent with query: {query}")
+    print(f"[DEBUG] Running find_flight_tool with query: {query}")
     
     try:
         res = await run_browser(query)
         print(f"[DEBUG] Browser response: {res}")
         return res
     except Exception as e:
-        print(f"[ERROR] Failed to run browser agent: {e}")
+        print(f"[ERROR] Failed to run find_flight_tool: {e}")
         return "Error fetching results"
 
+@tool
+async def checkout_flight_tool(query: str) -> str:
+    """checkout a flight based on the selected flight."""
+    if not query:
+        raise ValueError("Query cannot be empty")
+    
+    print(f"[DEBUG] Running checkout_flight_tool with query: {query}")
+    
+    try:
+        res = await run_browser(query)
+        print(f"[DEBUG] Browser response: {res}")
+        return res
+    except Exception as e:
+        print(f"[ERROR] Failed to run checkout_flight_tool: {e}")
+        return "Error fetching results"
 # User input and prompt
 
 
-async def runprompt(userinput):
+async def get_flights(userinput):
     agent = initialize_agent(
-        tools=[browser_tool],
+        tools=[find_flight_tool],
         llm=llm,
         agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,  # or another agent type that supports function calls
         verbose=True,
     )
     prompt = f"""
-    You are a travel assistant for a blind person and must use the `browser_tool` to search for flights when flight information is incomplete or needs verification. 
-    You should never provide a final answer without first calling the tool to fetch real-time flight data. For example:
-
+    You are a travel assistant for a blind person and must use the `get_flights` to search for flights when flight information is incomplete or needs verification. 
+    You should never provide a final answer without first calling the tool to fetch real-time flight data. 
     Example:
     User: "I want to book a flight from SFO to JFK on March 20th to 22nd."
-    Assistant: (Calls `browser_tool` with: {{"query": "search up flights from SFO to JFK on March 20th to 22nd"}})
-
+    Assistant: (Calls `find_flight_tool` with: {{"query": "book flight from <origin> to <destination> on <depart_date> to <return_date>"}})
+    
     Now respond to the user's input: {userinput}
+    """
+    # interface_llm = llm.bind_tools([browser_tool])
+    # response = await interface_llm.ainvoke(prompt)
+    response = await agent.arun({"input": prompt, "chat_history": []})
+
+    print(response)
+    prompt = f""" create a return message: 
+    "I found the following flights from <origin> to <destination> for you, let me know which airline and price you would like: [list of <airline> <price>]
+    create the concise list from the following:
+    {response}
+
+    """
+    concise_output = llm.invoke(prompt)
+    print(concise_output)
+    return (concise_output, response)
+    #ASK USER WHICH FLIGHT THEY WANT
+
+async def checkout_flight(userinput,last_prompt):
+    agent = initialize_agent(
+        tools=[checkout_flight_tool],
+        llm=llm,
+        agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,  # or another agent type that supports function calls
+        verbose=True,
+    )
+    prompt = f"""
+    You are a travel assistant for a blind person and must use the `checkout_flight_tool` to book the flight our user is interested in. You already know what the user wants. Here are the links for the flights that suit the user's needs: 
+    {last_prompt}
+    Example:
+    User: "I want the $200 flight on american airlines."
+    Assistant: (Calls `checkout_flight_tool` with: {{"query": following the Book Flight phase: book the $<price> <Airline> flight at <URL> from {last_prompt}"}})
+    
+    
+    Now run the checkout flights tool with the user's input: {userinput}
     """
     # interface_llm = llm.bind_tools([browser_tool])
     # response = await interface_llm.ainvoke(prompt)
     response = await agent.arun({"input": prompt, "chat_history": []})
     print(response)
     return response
+    # WE GET THE URLS AND FLIGHT INFO
+    
+    response = await agent.arun({"input": prompt, "chat_history": []})
+    ai_msg = llm.invoke(messages)
+    
+    return ai_msg
+
+    
 
 # Run the main function
 
