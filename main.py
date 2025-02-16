@@ -30,5 +30,6 @@ async def obtain_speech(websocket: WebSocket):
         await websocket.close()
         transcript = speech_processor.transcribe_audio_chunks(audio_chunks)
         audio_chunks.clear()
+        print(transcript)
         
         
