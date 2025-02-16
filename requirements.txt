@@ -3,4 +3,5 @@ fastapi
 pydantic
 langchain
 browser-use
-langchain-deepseek
+langchain-google-genai
+langchain_community
