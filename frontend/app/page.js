@@ -104,9 +104,8 @@ export default function Home() {
         <div>
           <a /*RECORD BUTTON*/
             className="btn-88"
-            href="https://google.com"
-            target="_blank"
             rel="noopener noreferrer"
+            onClick={clickButton}
           >
             <Image
               src="/globe.svg"
@@ -114,7 +113,8 @@ export default function Home() {
               width={60}
               height={60}
             />
-          </a>
+            {text}
+          </button>
         </div>
 
       </div>
