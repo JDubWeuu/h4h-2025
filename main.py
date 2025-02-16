@@ -5,11 +5,13 @@ from .speech_to_text.speech_from_audio import transcribe_file
 import aiofiles
 import subprocess
 import os
-from .browser.lchain import runprompt
+from .browser.lchain import get_flights, checkout_flight
 
 
 app = FastAPI()
 
+COUNT = 0
+DATA = ""
 origins = [
     "http://localhost:3000"
 ]
@@ -42,6 +44,7 @@ async def obtain_speech(websocket: WebSocket):
 
 @app.post("/send/wav", status_code=201)
 async def uploadMP3(file: UploadFile = File(...)):
+    global COUNT, DATA
     try:
         content = await file.read()
         # Define the upload directory within your project
@@ -58,7 +61,11 @@ async def uploadMP3(file: UploadFile = File(...)):
             text = res.results
             parsed = " ".join([item.alternatives[0].transcript for item in text])
             # print("asdasd",parsed,"asdasd")
-            output = await runprompt(parsed)
+            if COUNT == 1:
+                output = await checkout_flight(parsed,DATA)
+            else:
+                output,DATA = await get_flights(parsed)
+                COUNT+=1
         return {
             "message": output
         }
