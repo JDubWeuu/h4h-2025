@@ -4,6 +4,7 @@
 
 import dynamic from "next/dynamic";
 
+
 const AudioRecorder = dynamic(() => import("./components/AudioRecorder"), { ssr: false });
 
 export default function Page() {

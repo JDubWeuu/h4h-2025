@@ -1,5 +1,4 @@
 .env
-.venv
-*/*.env
-.venv
-
+*/.venv
+*/.next
+**/__pycache__
